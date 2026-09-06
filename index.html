@@ -31,12 +31,6 @@
         var(--paper);
     }
 
-    body.celebrated {
-      background:
-        linear-gradient(rgba(36, 29, 43, .22), rgba(36, 29, 43, .22)),
-        url('chamoio.jpg') center / cover no-repeat;
-    }
-
     body.celebrated::before,
     body.celebrated::after { opacity: 0; }
 
@@ -207,8 +201,8 @@
     }
 
     .question-image {
-      display: block;
-      width: min(180px, 42vw);
+      display: none;
+      width: min(125px, 30vw);
       aspect-ratio: 1;
       margin: 0 auto 22px;
       border: 5px solid white;
@@ -218,12 +212,12 @@
       animation: image-pop .7s cubic-bezier(.2, 1.5, .4, 1) both;
     }
 
-    body.celebrated .question-image { display: none; }
+    body.celebrated .question-image { display: block; }
 
     body.celebrated h1,
     body.celebrated .subcopy,
     body.celebrated .eyebrow,
-    body.celebrated .answer { color: white; text-shadow: 0 2px 8px rgba(36, 29, 43, .7); }
+    body.celebrated .answer { color: var(--ink); text-shadow: none; }
 
     @keyframes float-heart {
       0% { opacity: 0; transform: translate(0, 0) scale(.7) rotate(0); }
