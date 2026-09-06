@@ -185,11 +185,13 @@
       const maxTop = playground.clientHeight - noButton.offsetHeight;
       const nextLeft = Math.max(0, Math.random() * maxLeft);
       const nextTop = Math.max(noButton.offsetHeight / 2, Math.random() * maxTop + noButton.offsetHeight / 2);
+      const screenScale = (window.innerWidth * .88) / yesButton.offsetWidth;
 
       noButton.style.left = `${nextLeft}px`;
       noButton.style.top = `${nextTop}px`;
-      yesScale = Math.min(1 + noAttempts * .16, 2.25);
-      yesButton.style.transform = `translateY(-50%) scale(${yesScale})`;
+      yesButton.style.left = '50%';
+      yesScale = Math.min(1 + noAttempts * .35, screenScale);
+      yesButton.style.transform = `translate(-50%, -50%) scale(${yesScale})`;
     }
 
     noButton.addEventListener('pointerenter', moveNoButton);
@@ -210,6 +212,7 @@
     resetButton.addEventListener('click', () => {
       noAttempts = 0;
       yesScale = 1;
+      yesButton.style.left = window.innerWidth <= 520 ? '5%' : '15%';
       yesButton.textContent = 'Sí';
       yesButton.style.transform = 'translateY(-50%) scale(1)';
       noButton.hidden = false;
