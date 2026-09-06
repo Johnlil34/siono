@@ -195,91 +195,17 @@
       background: rgba(36, 29, 43, .35);
     }
 
-    .hamster {
-      position: absolute;
-      left: 50%;
-      bottom: 8%;
-      width: min(220px, 48vw);
+    .question-image {
+      display: block;
+      width: min(180px, 42vw);
       aspect-ratio: 1;
+      margin: 0 auto 22px;
+      border: 5px solid white;
       border-radius: 50%;
-      background: #d89561;
-      border: 5px solid #9a5c3f;
-      box-shadow: inset 18px -16px 0 rgba(117, 62, 45, .13), 0 14px 24px rgba(100, 60, 55, .2);
-      transform: translateX(-50%);
-      animation: hamster-pop .7s cubic-bezier(.2, 1.5, .4, 1) both;
+      object-fit: cover;
+      box-shadow: 0 12px 24px rgba(100, 60, 55, .2);
+      animation: image-pop .7s cubic-bezier(.2, 1.5, .4, 1) both;
     }
-
-    .hamster::before,
-    .hamster::after {
-      content: '';
-      position: absolute;
-      top: -24px;
-      width: 62px;
-      height: 62px;
-      border-radius: 50%;
-      background: #d89561;
-      border: 5px solid #9a5c3f;
-      z-index: -1;
-    }
-
-    .hamster::before { left: 8%; }
-    .hamster::after { right: 8%; }
-
-    .hamster-face {
-      position: absolute;
-      inset: 0;
-    }
-
-    .hamster-face::before,
-    .hamster-face::after {
-      content: '';
-      position: absolute;
-      top: 38%;
-      width: 16px;
-      height: 20px;
-      border-radius: 50%;
-      background: var(--ink);
-    }
-
-    .hamster-face::before { left: 25%; }
-    .hamster-face::after { right: 25%; }
-
-    .hamster-smile {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      width: 74px;
-      height: 45px;
-      border-bottom: 5px solid var(--ink);
-      border-radius: 0 0 50% 50%;
-      transform: translateX(-50%);
-    }
-
-    .tooth {
-      position: absolute;
-      top: 57%;
-      z-index: 2;
-      width: 21px;
-      height: 28px;
-      border: 2px solid #d8d4c8;
-      border-radius: 3px 3px 8px 8px;
-      background: white;
-    }
-
-    .tooth.left { left: calc(50% - 20px); transform: rotate(3deg); }
-    .tooth.right { right: calc(50% - 20px); transform: rotate(-3deg); }
-
-    .cheek {
-      position: absolute;
-      top: 54%;
-      width: 24px;
-      height: 14px;
-      border-radius: 50%;
-      background: #f2a18e;
-    }
-
-    .cheek.left { left: 14%; }
-    .cheek.right { right: 14%; }
 
     @keyframes float-heart {
       0% { opacity: 0; transform: translate(0, 0) scale(.7) rotate(0); }
@@ -293,9 +219,9 @@
       100% { opacity: .8; transform: translateY(-125vh) rotate(8deg); }
     }
 
-    @keyframes hamster-pop {
-      from { opacity: 0; transform: translateX(-50%) scale(.35) rotate(-8deg); }
-      to { opacity: 1; transform: translateX(-50%) scale(1) rotate(0); }
+    @keyframes image-pop {
+      from { opacity: 0; transform: scale(.35) rotate(-8deg); }
+      to { opacity: 1; transform: scale(1) rotate(0); }
     }
 
     @keyframes appear {
@@ -314,6 +240,7 @@
 <body>
   <main>
     <p class="eyebrow">Tengo algo que preguntarte</p>
+    <img class="question-image" src="chamoio.jpg" alt="Hámster sonriendo">
     <h1 id="question">¿Ya me perdonaste?</h1>
     <p class="subcopy">¿Verdad que ya estamos de abuenas?</p>
 
@@ -327,15 +254,6 @@
   </main>
 
   <div class="celebration" id="celebration" aria-hidden="true">
-    <div class="hamster" aria-label="Hámster sonriendo con dos dientes">
-      <div class="hamster-face">
-        <span class="cheek left"></span>
-        <span class="cheek right"></span>
-        <span class="hamster-smile"></span>
-        <span class="tooth left"></span>
-        <span class="tooth right"></span>
-      </div>
-    </div>
   </div>
 
   <script>
