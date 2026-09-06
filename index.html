@@ -112,7 +112,7 @@
 
     #no {
       position: fixed;
-      left: 64%;
+      left: calc(64% - 58px);
       color: var(--ink);
       background: var(--lavender);
       transition: left .35s cubic-bezier(.2, .8, .2, 1), top .35s cubic-bezier(.2, .8, .2, 1), transform .22s ease;
@@ -151,7 +151,7 @@
     @media (max-width: 520px) {
       .playground { height: 210px; margin-top: 28px; }
       #yes { left: 5%; }
-      #no { left: 55%; }
+      #no { left: calc(55% - 52.5px); }
       button { min-width: 105px; padding-inline: 18px; }
     }
   </style>
@@ -195,6 +195,14 @@
       yesButton.style.transform = `translate(-50%, -50%) scale(${yesScale})`;
     }
 
+    function resetNoPosition() {
+      const availableWidth = window.innerWidth - noButton.offsetWidth;
+      const positionRatio = window.innerWidth <= 520 ? .55 : .64;
+
+      noButton.style.left = `${Math.max(8, availableWidth * positionRatio)}px`;
+      noButton.style.top = `${window.innerHeight / 2}px`;
+    }
+
     noButton.addEventListener('pointerenter', moveNoButton);
     noButton.addEventListener('touchstart', (event) => {
       event.preventDefault();
@@ -202,6 +210,7 @@
     }, { passive: false });
     noButton.addEventListener('focus', moveNoButton);
     noButton.addEventListener('click', moveNoButton);
+    resetNoPosition();
 
     yesButton.addEventListener('click', () => {
       answer.textContent = 'Sabía que dirías que sí ♥';
@@ -217,8 +226,7 @@
       yesButton.textContent = 'Sí';
       yesButton.style.transform = 'translateY(-50%) scale(1)';
       noButton.hidden = false;
-      noButton.style.left = window.innerWidth <= 520 ? '55%' : '64%';
-      noButton.style.top = '50%';
+      resetNoPosition();
       answer.textContent = '';
       resetButton.classList.remove('visible');
     });
