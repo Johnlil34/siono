@@ -142,6 +142,162 @@
     .reset.visible { display: inline-block; }
     .reset:hover { background: white; transform: none; }
 
+    .celebration {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .celebration.visible { display: block; }
+
+    .heart {
+      position: absolute;
+      bottom: -40px;
+      color: var(--coral);
+      font-family: Arial, sans-serif;
+      font-size: var(--size);
+      animation: float-heart var(--duration) ease-in var(--delay) infinite;
+      transform: translateX(var(--drift));
+    }
+
+    .balloon {
+      position: absolute;
+      bottom: -130px;
+      left: var(--left);
+      width: 58px;
+      height: 74px;
+      border-radius: 50% 50% 46% 46%;
+      background: var(--color);
+      box-shadow: inset -9px -8px 0 rgba(0, 0, 0, .08);
+      animation: float-balloon var(--duration) ease-in var(--delay) infinite;
+    }
+
+    .balloon::before {
+      content: '';
+      position: absolute;
+      left: 25px;
+      bottom: -9px;
+      border-top: 12px solid var(--color);
+      border-right: 5px solid transparent;
+      border-left: 5px solid transparent;
+    }
+
+    .balloon::after {
+      content: '';
+      position: absolute;
+      top: 82px;
+      left: 29px;
+      width: 1px;
+      height: 110px;
+      background: rgba(36, 29, 43, .35);
+    }
+
+    .hamster {
+      position: absolute;
+      left: 50%;
+      bottom: 8%;
+      width: min(220px, 48vw);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: #d89561;
+      border: 5px solid #9a5c3f;
+      box-shadow: inset 18px -16px 0 rgba(117, 62, 45, .13), 0 14px 24px rgba(100, 60, 55, .2);
+      transform: translateX(-50%);
+      animation: hamster-pop .7s cubic-bezier(.2, 1.5, .4, 1) both;
+    }
+
+    .hamster::before,
+    .hamster::after {
+      content: '';
+      position: absolute;
+      top: -24px;
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      background: #d89561;
+      border: 5px solid #9a5c3f;
+      z-index: -1;
+    }
+
+    .hamster::before { left: 8%; }
+    .hamster::after { right: 8%; }
+
+    .hamster-face {
+      position: absolute;
+      inset: 0;
+    }
+
+    .hamster-face::before,
+    .hamster-face::after {
+      content: '';
+      position: absolute;
+      top: 38%;
+      width: 16px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--ink);
+    }
+
+    .hamster-face::before { left: 25%; }
+    .hamster-face::after { right: 25%; }
+
+    .hamster-smile {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 74px;
+      height: 45px;
+      border-bottom: 5px solid var(--ink);
+      border-radius: 0 0 50% 50%;
+      transform: translateX(-50%);
+    }
+
+    .tooth {
+      position: absolute;
+      top: 57%;
+      z-index: 2;
+      width: 21px;
+      height: 28px;
+      border: 2px solid #d8d4c8;
+      border-radius: 3px 3px 8px 8px;
+      background: white;
+    }
+
+    .tooth.left { left: calc(50% - 20px); transform: rotate(3deg); }
+    .tooth.right { right: calc(50% - 20px); transform: rotate(-3deg); }
+
+    .cheek {
+      position: absolute;
+      top: 54%;
+      width: 24px;
+      height: 14px;
+      border-radius: 50%;
+      background: #f2a18e;
+    }
+
+    .cheek.left { left: 14%; }
+    .cheek.right { right: 14%; }
+
+    @keyframes float-heart {
+      0% { opacity: 0; transform: translate(0, 0) scale(.7) rotate(0); }
+      15% { opacity: 1; }
+      100% { opacity: 0; transform: translate(var(--drift), -110vh) scale(1.2) rotate(18deg); }
+    }
+
+    @keyframes float-balloon {
+      0% { opacity: 0; transform: translateY(0) rotate(-4deg); }
+      12% { opacity: 1; }
+      100% { opacity: .8; transform: translateY(-125vh) rotate(8deg); }
+    }
+
+    @keyframes hamster-pop {
+      from { opacity: 0; transform: translateX(-50%) scale(.35) rotate(-8deg); }
+      to { opacity: 1; transform: translateX(-50%) scale(1) rotate(0); }
+    }
+
     @keyframes appear {
       from { opacity: 0; transform: translateY(16px); }
       to { opacity: 1; transform: translateY(0); }
@@ -170,14 +326,56 @@
     <button class="reset" id="reset" type="button">Volver a preguntar</button>
   </main>
 
+  <div class="celebration" id="celebration" aria-hidden="true">
+    <div class="hamster" aria-label="Hámster sonriendo con dos dientes">
+      <div class="hamster-face">
+        <span class="cheek left"></span>
+        <span class="cheek right"></span>
+        <span class="hamster-smile"></span>
+        <span class="tooth left"></span>
+        <span class="tooth right"></span>
+      </div>
+    </div>
+  </div>
+
   <script>
     const yesButton = document.querySelector('#yes');
     const noButton = document.querySelector('#no');
     const playground = document.querySelector('.playground');
     const answer = document.querySelector('#answer');
     const resetButton = document.querySelector('#reset');
+    const celebration = document.querySelector('#celebration');
     let yesScale = 1;
     let noAttempts = 0;
+
+    function launchCelebration() {
+      celebration.querySelectorAll('.heart, .balloon').forEach((item) => item.remove());
+
+      for (let index = 0; index < 24; index += 1) {
+        const heart = document.createElement('span');
+        heart.className = 'heart';
+        heart.textContent = '♥';
+        heart.style.left = `${Math.random() * 100}%`;
+        heart.style.setProperty('--size', `${18 + Math.random() * 28}px`);
+        heart.style.setProperty('--duration', `${3.8 + Math.random() * 3}s`);
+        heart.style.setProperty('--delay', `${Math.random() * 2.5}s`);
+        heart.style.setProperty('--drift', `${-70 + Math.random() * 140}px`);
+        celebration.appendChild(heart);
+      }
+
+      const colors = ['#ff5c62', '#ffcf56', '#8bc7a2', '#9b8be8', '#6fb4d8'];
+      for (let index = 0; index < 9; index += 1) {
+        const balloon = document.createElement('span');
+        balloon.className = 'balloon';
+        balloon.style.setProperty('--left', `${5 + Math.random() * 90}%`);
+        balloon.style.setProperty('--color', colors[index % colors.length]);
+        balloon.style.setProperty('--duration', `${7 + Math.random() * 4}s`);
+        balloon.style.setProperty('--delay', `${Math.random() * 3}s`);
+        celebration.appendChild(balloon);
+      }
+
+      celebration.classList.add('visible');
+    }
 
     function moveNoButton() {
       noAttempts += 1;
@@ -205,6 +403,7 @@
       yesButton.textContent = '¡Sí!';
       resetButton.classList.add('visible');
       noButton.hidden = true;
+      launchCelebration();
     });
 
     resetButton.addEventListener('click', () => {
@@ -217,6 +416,7 @@
       noButton.style.top = '50%';
       answer.textContent = '';
       resetButton.classList.remove('visible');
+      celebration.classList.remove('visible');
     });
   </script>
 </body>
