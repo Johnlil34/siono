@@ -112,7 +112,8 @@
 
     #no {
       position: fixed;
-      left: calc(64% - 58px);
+      left: 50%;
+      z-index: 3;
       color: var(--ink);
       background: var(--lavender);
       transition: left .35s cubic-bezier(.2, .8, .2, 1), top .35s cubic-bezier(.2, .8, .2, 1), transform .22s ease;
@@ -174,24 +175,21 @@
   <script>
     const yesButton = document.querySelector('#yes');
     const noButton = document.querySelector('#no');
-    const question = document.querySelector('#question');
-    const playground = document.querySelector('.playground');
     const answer = document.querySelector('#answer');
     const resetButton = document.querySelector('#reset');
     let yesScale = 1;
     let noAttempts = 0;
+    const clamp = (value, minimum, maximum) => Math.min(maximum, Math.max(minimum, value));
 
     function moveNoButton() {
       noAttempts += 1;
-      const questionRect = question.getBoundingClientRect();
-      const horizontalMargin = Math.min(110, window.innerWidth * .2);
-      const verticalMargin = Math.min(95, window.innerHeight * .12);
-      const minLeft = Math.max(8, questionRect.left - horizontalMargin);
-      const maxLeft = Math.min(window.innerWidth - noButton.offsetWidth - 8, questionRect.right + horizontalMargin - noButton.offsetWidth);
-      const minTop = Math.max(noButton.offsetHeight / 2 + 8, questionRect.top - verticalMargin + noButton.offsetHeight / 2);
-      const maxTop = Math.min(window.innerHeight - noButton.offsetHeight / 2 - 8, questionRect.bottom + verticalMargin - noButton.offsetHeight / 2);
-      const nextLeft = minLeft + Math.random() * Math.max(0, maxLeft - minLeft);
-      const nextTop = minTop + Math.random() * Math.max(0, maxTop - minTop);
+      const currentRect = noButton.getBoundingClientRect();
+      const movement = Math.min(72, window.innerWidth * .12);
+      const maxLeft = window.innerWidth - noButton.offsetWidth - 8;
+      const maxTop = window.innerHeight - noButton.offsetHeight / 2 - 8;
+      const nextLeft = clamp(currentRect.left + (Math.random() - .5) * movement * 2, 8, maxLeft);
+      const currentCenter = currentRect.top + currentRect.height / 2;
+      const nextTop = clamp(currentCenter + (Math.random() - .5) * movement * 2, noButton.offsetHeight / 2 + 8, maxTop);
       const screenScale = (window.innerWidth * .88) / yesButton.offsetWidth;
 
       noButton.style.left = `${nextLeft}px`;
@@ -202,13 +200,13 @@
     }
 
     function resetNoPosition() {
-      const questionRect = question.getBoundingClientRect();
+      const yesRect = yesButton.getBoundingClientRect();
       const availableWidth = window.innerWidth - noButton.offsetWidth;
-      const preferredLeft = questionRect.right + 28;
-      const preferredTop = questionRect.bottom + 58;
+      const preferredLeft = yesRect.right + 18;
+      const preferredTop = yesRect.top + yesRect.height / 2;
 
-      noButton.style.left = `${Math.min(availableWidth - 8, Math.max(8, preferredLeft))}px`;
-      noButton.style.top = `${Math.min(window.innerHeight - noButton.offsetHeight / 2 - 8, Math.max(noButton.offsetHeight / 2 + 8, preferredTop))}px`;
+      noButton.style.left = `${clamp(preferredLeft, 8, availableWidth - 8)}px`;
+      noButton.style.top = `${clamp(preferredTop, noButton.offsetHeight / 2 + 8, window.innerHeight - noButton.offsetHeight / 2 - 8)}px`;
     }
 
     noButton.addEventListener('pointerenter', moveNoButton);
