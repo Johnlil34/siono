@@ -111,9 +111,7 @@
     #yes:hover { background: var(--coral-dark); transform: translateY(-50%) scale(1.05); }
 
     #no {
-      position: fixed;
-      left: 50%;
-      z-index: 3;
+      left: 64%;
       color: var(--ink);
       background: var(--lavender);
       transition: left .35s cubic-bezier(.2, .8, .2, 1), top .35s cubic-bezier(.2, .8, .2, 1), transform .22s ease;
@@ -152,7 +150,7 @@
     @media (max-width: 520px) {
       .playground { height: 210px; margin-top: 28px; }
       #yes { left: 5%; }
-      #no { left: calc(55% - 52.5px); }
+      #no { left: 55%; }
       button { min-width: 105px; padding-inline: 18px; }
     }
   </style>
@@ -175,38 +173,23 @@
   <script>
     const yesButton = document.querySelector('#yes');
     const noButton = document.querySelector('#no');
+    const playground = document.querySelector('.playground');
     const answer = document.querySelector('#answer');
     const resetButton = document.querySelector('#reset');
     let yesScale = 1;
     let noAttempts = 0;
-    const clamp = (value, minimum, maximum) => Math.min(maximum, Math.max(minimum, value));
 
     function moveNoButton() {
       noAttempts += 1;
-      const currentRect = noButton.getBoundingClientRect();
-      const movement = Math.min(72, window.innerWidth * .12);
-      const maxLeft = window.innerWidth - noButton.offsetWidth - 8;
-      const maxTop = window.innerHeight - noButton.offsetHeight / 2 - 8;
-      const nextLeft = clamp(currentRect.left + (Math.random() - .5) * movement * 2, 8, maxLeft);
-      const currentCenter = currentRect.top + currentRect.height / 2;
-      const nextTop = clamp(currentCenter + (Math.random() - .5) * movement * 2, noButton.offsetHeight / 2 + 8, maxTop);
-      const screenScale = (window.innerWidth * .88) / yesButton.offsetWidth;
+      const maxLeft = playground.clientWidth - noButton.offsetWidth;
+      const maxTop = playground.clientHeight - noButton.offsetHeight;
+      const nextLeft = Math.max(0, Math.random() * maxLeft);
+      const nextTop = Math.max(noButton.offsetHeight / 2, Math.random() * maxTop + noButton.offsetHeight / 2);
 
       noButton.style.left = `${nextLeft}px`;
       noButton.style.top = `${nextTop}px`;
-      yesButton.style.left = '50%';
-      yesScale = Math.min(1 + noAttempts * .35, screenScale);
-      yesButton.style.transform = `translate(-50%, -50%) scale(${yesScale})`;
-    }
-
-    function resetNoPosition() {
-      const yesRect = yesButton.getBoundingClientRect();
-      const availableWidth = window.innerWidth - noButton.offsetWidth;
-      const preferredLeft = yesRect.right + 18;
-      const preferredTop = yesRect.top + yesRect.height / 2;
-
-      noButton.style.left = `${clamp(preferredLeft, 8, availableWidth - 8)}px`;
-      noButton.style.top = `${clamp(preferredTop, noButton.offsetHeight / 2 + 8, window.innerHeight - noButton.offsetHeight / 2 - 8)}px`;
+      yesScale = Math.min(1 + noAttempts * .16, 2.25);
+      yesButton.style.transform = `translateY(-50%) scale(${yesScale})`;
     }
 
     noButton.addEventListener('pointerenter', moveNoButton);
@@ -216,7 +199,6 @@
     }, { passive: false });
     noButton.addEventListener('focus', moveNoButton);
     noButton.addEventListener('click', moveNoButton);
-    resetNoPosition();
 
     yesButton.addEventListener('click', () => {
       answer.textContent = 'Sabía que dirías que sí ♥';
@@ -228,11 +210,11 @@
     resetButton.addEventListener('click', () => {
       noAttempts = 0;
       yesScale = 1;
-      yesButton.style.left = window.innerWidth <= 520 ? '5%' : '15%';
       yesButton.textContent = 'Sí';
       yesButton.style.transform = 'translateY(-50%) scale(1)';
       noButton.hidden = false;
-      resetNoPosition();
+      noButton.style.left = window.innerWidth <= 520 ? '55%' : '64%';
+      noButton.style.top = '50%';
       answer.textContent = '';
       resetButton.classList.remove('visible');
     });
