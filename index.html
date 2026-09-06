@@ -111,6 +111,7 @@
     #yes:hover { background: var(--coral-dark); transform: translateY(-50%) scale(1.05); }
 
     #no {
+      position: fixed;
       left: 64%;
       color: var(--ink);
       background: var(--lavender);
@@ -181,8 +182,8 @@
 
     function moveNoButton() {
       noAttempts += 1;
-      const maxLeft = playground.clientWidth - noButton.offsetWidth;
-      const maxTop = playground.clientHeight - noButton.offsetHeight;
+      const maxLeft = window.innerWidth - noButton.offsetWidth;
+      const maxTop = window.innerHeight - noButton.offsetHeight;
       const nextLeft = Math.max(0, Math.random() * maxLeft);
       const nextTop = Math.max(noButton.offsetHeight / 2, Math.random() * maxTop + noButton.offsetHeight / 2);
       const screenScale = (window.innerWidth * .88) / yesButton.offsetWidth;
