@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Una pregunta</title>
+  <style>
+    :root {
+      --ink: #241d2b;
+      --muted: #786c7d;
+      --paper: #fffaf5;
+      --coral: #ff5c62;
+      --coral-dark: #e74655;
+      --cream: #ffe9cf;
+      --lavender: #e6ddff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      color: var(--ink);
+      font-family: Georgia, 'Times New Roman', serif;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(255, 208, 157, .72) 0 10%, transparent 28%),
+        radial-gradient(circle at 87% 82%, rgba(211, 200, 255, .72) 0 12%, transparent 31%),
+        var(--paper);
+    }
+
+    body::before,
+    body::after {
+      content: '';
+      position: fixed;
+      width: 180px;
+      height: 180px;
+      border: 1px solid rgba(36, 29, 43, .09);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    body::before { top: 8vh; right: 8vw; }
+    body::after { bottom: 6vh; left: 7vw; width: 90px; height: 90px; }
+
+    main {
+      width: min(92vw, 720px);
+      text-align: center;
+      animation: appear .8s ease both;
+    }
+
+    .eyebrow {
+      margin: 0 0 22px;
+      color: var(--coral-dark);
+      font-family: Arial, sans-serif;
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 620px;
+      margin: 0 auto;
+      font-size: clamp(3rem, 9vw, 6.8rem);
+      line-height: .92;
+      font-weight: 400;
+      letter-spacing: 0;
+    }
+
+    .subcopy {
+      margin: 24px auto 0;
+      color: var(--muted);
+      font-family: Arial, sans-serif;
+      font-size: .95rem;
+    }
+
+    .playground {
+      position: relative;
+      height: 170px;
+      margin: 35px auto 0;
+      max-width: 570px;
+    }
+
+    button {
+      position: absolute;
+      top: 50%;
+      min-width: 116px;
+      min-height: 56px;
+      padding: 14px 24px;
+      border: 0;
+      border-radius: 999px;
+      cursor: pointer;
+      font: 700 1rem Arial, sans-serif;
+      transform: translateY(-50%);
+      transition: transform .22s ease, box-shadow .22s ease, font-size .22s ease;
+    }
+
+    button:focus-visible { outline: 3px solid var(--ink); outline-offset: 4px; }
+
+    #yes {
+      left: 15%;
+      z-index: 2;
+      color: white;
+      background: var(--coral);
+      box-shadow: 0 12px 25px rgba(231, 70, 85, .25);
+    }
+
+    #yes:hover { background: var(--coral-dark); transform: translateY(-50%) scale(1.05); }
+
+    #no {
+      left: 64%;
+      color: var(--ink);
+      background: var(--lavender);
+      transition: left .35s cubic-bezier(.2, .8, .2, 1), top .35s cubic-bezier(.2, .8, .2, 1), transform .22s ease;
+    }
+
+    #no:hover { transform: translateY(-50%) rotate(-4deg); }
+
+    .answer {
+      min-height: 32px;
+      margin: 4px 0 0;
+      color: var(--coral-dark);
+      font-size: 1.15rem;
+    }
+
+    .reset {
+      display: none;
+      position: static;
+      min-height: auto;
+      min-width: auto;
+      padding: 10px 18px;
+      color: var(--ink);
+      background: transparent;
+      border: 1px solid rgba(36, 29, 43, .25);
+      font-size: .8rem;
+      transform: none;
+    }
+
+    .reset.visible { display: inline-block; }
+    .reset:hover { background: white; transform: none; }
+
+    @keyframes appear {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 520px) {
+      .playground { height: 210px; margin-top: 28px; }
+      #yes { left: 5%; }
+      #no { left: 55%; }
+      button { min-width: 105px; padding-inline: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="eyebrow">Tengo algo que preguntarte</p>
+    <h1 id="question">¿Ya me perdonaste?</h1>
+    <p class="subcopy">¿Verdad que ya estamos de abuenas?</p>
+
+    <section class="playground" aria-label="Opciones de respuesta">
+      <button id="yes" type="button">Sí</button>
+      <button id="no" type="button">No</button>
+    </section>
+
+    <p class="answer" id="answer" aria-live="polite"></p>
+    <button class="reset" id="reset" type="button">Volver a preguntar</button>
+  </main>
+
+  <script>
+    const yesButton = document.querySelector('#yes');
+    const noButton = document.querySelector('#no');
+    const playground = document.querySelector('.playground');
+    const answer = document.querySelector('#answer');
+    const resetButton = document.querySelector('#reset');
+    let yesScale = 1;
+    let noAttempts = 0;
+
+    function moveNoButton() {
+      noAttempts += 1;
+      const maxLeft = playground.clientWidth - noButton.offsetWidth;
+      const maxTop = playground.clientHeight - noButton.offsetHeight;
+      const nextLeft = Math.max(0, Math.random() * maxLeft);
+      const nextTop = Math.max(noButton.offsetHeight / 2, Math.random() * maxTop + noButton.offsetHeight / 2);
+
+      noButton.style.left = `${nextLeft}px`;
+      noButton.style.top = `${nextTop}px`;
+      yesScale = Math.min(1 + noAttempts * .16, 2.25);
+      yesButton.style.transform = `translateY(-50%) scale(${yesScale})`;
+    }
+
+    noButton.addEventListener('pointerenter', moveNoButton);
+    noButton.addEventListener('touchstart', (event) => {
+      event.preventDefault();
+      moveNoButton();
+    }, { passive: false });
+    noButton.addEventListener('focus', moveNoButton);
+    noButton.addEventListener('click', moveNoButton);
+
+    yesButton.addEventListener('click', () => {
+      answer.textContent = 'Sabía que dirías que sí ♥';
+      yesButton.textContent = '¡Sí!';
+      resetButton.classList.add('visible');
+      noButton.hidden = true;
+    });
+
+    resetButton.addEventListener('click', () => {
+      noAttempts = 0;
+      yesScale = 1;
+      yesButton.textContent = 'Sí';
+      yesButton.style.transform = 'translateY(-50%) scale(1)';
+      noButton.hidden = false;
+      noButton.style.left = window.innerWidth <= 520 ? '55%' : '64%';
+      noButton.style.top = '50%';
+      answer.textContent = '';
+      resetButton.classList.remove('visible');
+    });
+  </script>
+</body>
+</html>
