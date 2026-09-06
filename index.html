@@ -31,6 +31,15 @@
         var(--paper);
     }
 
+    body.celebrated {
+      background:
+        linear-gradient(rgba(36, 29, 43, .22), rgba(36, 29, 43, .22)),
+        url('chamoio.jpg') center / cover no-repeat;
+    }
+
+    body.celebrated::before,
+    body.celebrated::after { opacity: 0; }
+
     body::before,
     body::after {
       content: '';
@@ -46,6 +55,8 @@
     body::after { bottom: 6vh; left: 7vw; width: 90px; height: 90px; }
 
     main {
+      position: relative;
+      z-index: 11;
       width: min(92vw, 720px);
       text-align: center;
       animation: appear .8s ease both;
@@ -207,6 +218,13 @@
       animation: image-pop .7s cubic-bezier(.2, 1.5, .4, 1) both;
     }
 
+    body.celebrated .question-image { display: none; }
+
+    body.celebrated h1,
+    body.celebrated .subcopy,
+    body.celebrated .eyebrow,
+    body.celebrated .answer { color: white; text-shadow: 0 2px 8px rgba(36, 29, 43, .7); }
+
     @keyframes float-heart {
       0% { opacity: 0; transform: translate(0, 0) scale(.7) rotate(0); }
       15% { opacity: 1; }
@@ -321,6 +339,7 @@
       yesButton.textContent = '¡Sí!';
       resetButton.classList.add('visible');
       noButton.hidden = true;
+      document.body.classList.add('celebrated');
       launchCelebration();
     });
 
@@ -335,6 +354,7 @@
       answer.textContent = '';
       resetButton.classList.remove('visible');
       celebration.classList.remove('visible');
+      document.body.classList.remove('celebrated');
     });
   </script>
 </body>
